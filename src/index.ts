@@ -48,8 +48,8 @@ const material = new THREE.MeshStandardMaterial({
     normalMap: paperNormalMap,
     normalScale: new THREE.Vector2(0.2, 0.2),
 }) // 質感
-const plane = new THREE.Mesh(geometry, material)
-scene.add(plane)
+const paper = new THREE.Mesh(geometry, material)
+scene.add(paper)
 
 tick();
 

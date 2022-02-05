@@ -23,8 +23,7 @@
     "dat.gui": "^0.7.7",
     "stats-js": "^1.0.1",
     "style-loader": "^3.3.1",
-    "three": "^0.137.5",
-    "three-text2d": "^0.6.0"
+    "three": "^0.137.5"
   },
   "private": true
 }
