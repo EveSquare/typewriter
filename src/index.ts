@@ -1,47 +1,73 @@
-import * as THREE from "three";
+import * as THREE from "three"
+
+const paperBasePath = "static/textures/Watercolor_Paper_001_COLOR.jpg"
+const paperNormalPath = "static/textures/Watercolor_Paper_001_NORM.jpg"
+
 
 const sizes = {
     width: window.innerWidth,
     height: window.innerHeight
 }
 
-window.addEventListener("DOMContentLoaded", () => {
-  // レンダラーを作成
-  const renderer = new THREE.WebGLRenderer();
-  // レンダラーのサイズを設定
-  renderer.setSize(sizes.width, sizes.height);
-  // canvasをbodyに追加
-  document.body.appendChild(renderer.domElement);
+/**
+ * Renderer
+ */
+const renderer = new THREE.WebGLRenderer({
+    canvas: document.querySelector("#webGL") as HTMLCanvasElement
+})
+renderer.setPixelRatio(window.devicePixelRatio)
+renderer.setSize(sizes.width, sizes.height)
 
-  // シーンを作成
-  const scene = new THREE.Scene();
+// Scene
+const scene = new THREE.Scene()
 
-  // カメラを作成
-  const camera = new THREE.PerspectiveCamera(45, 800 / 600, 1, 10000);
-  camera.position.set(0, 0, 1000);
+/**
+ * Camera
+ */
+const fov: number = 45              // 画角
+    , aspectRatio = sizes.width / sizes.height  // アスペクト比
+const camera = new THREE.PerspectiveCamera(fov, aspectRatio)
+camera.position.set(0, 0, +500)
 
-  // 箱を作成
-  const geometry = new THREE.BoxGeometry(250, 250, 250);
-  const material = new THREE.MeshStandardMaterial({ color: 0xff0000 });
-  const box = new THREE.Mesh(geometry, material);
-  box.position.z = -5;
-  scene.add(box);
+/**
+ * Light
+ */
+const directionalLight = new THREE.DirectionalLight(0xFFFFFF)
+directionalLight.position.set(0, 15, 20)
+scene.add(directionalLight)
 
-  // 平行光源を生成
-  const light = new THREE.DirectionalLight(0xffffff);
-  light.position.set(1, 1, 1);
-  scene.add(light);
+// textures
+const textureLoader = new THREE.TextureLoader()
+const paperBaseColor = textureLoader.load(paperBasePath)
+const paperNormalMap = textureLoader.load(paperNormalPath)
 
-  const tick = (): void => {
-    requestAnimationFrame(tick);
+// Paper
+const geometry = new THREE.PlaneGeometry(210, 297) // 形状
+const material = new THREE.MeshStandardMaterial({
+    map: paperBaseColor,
+    normalMap: paperNormalMap,
+    normalScale: new THREE.Vector2(0.2, 0.2),
+}) // 質感
+const plane = new THREE.Mesh(geometry, material)
+scene.add(plane)
 
-    box.rotation.x += 0.02;
-    box.rotation.y += 0.02;
+tick();
 
-    // 描画
-    renderer.render(scene, camera);
-  };
-  tick();
+function tick() {
+    renderer.render(scene, camera)
+    requestAnimationFrame(tick)
+}
 
-  console.log("Hello Three.js");
-});
+window.addEventListener("resize", () => {
+    // Update sizes
+    sizes.width = window.innerWidth
+    sizes.height = window.innerHeight
+
+    // Update camera
+    camera.aspect = sizes.width / sizes.height
+    camera.updateProjectionMatrix()
+
+    // Update renderer
+    renderer.setSize(sizes.width, sizes.height)
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+})
