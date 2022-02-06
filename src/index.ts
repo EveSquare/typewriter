@@ -1,8 +1,10 @@
 import * as THREE from "three"
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader"
 
 const paperBasePath = "static/textures/Watercolor_Paper_001_COLOR.jpg"
 const paperNormalPath = "static/textures/Watercolor_Paper_001_NORM.jpg"
-
+// const typeWriterModlePath = "https://rawcdn.githack.com/nishi-dy/glb--files/d0a6e1e252671749fc9d80dd5e8e375f132dab56/glass.glb"
+const typeWriterModlePath = "static/model/typewriter.glb"
 
 const sizes = {
     width: window.innerWidth,
@@ -27,7 +29,11 @@ const scene = new THREE.Scene()
 const fov: number = 45              // 画角
     , aspectRatio = sizes.width / sizes.height  // アスペクト比
 const camera = new THREE.PerspectiveCamera(fov, aspectRatio)
-camera.position.set(0, 0, +500)
+camera.position.set(0, 0, 10)
+
+const axis = new THREE.AxesHelper(2000);
+axis.position.set(0, 0, 0);
+scene.add(axis);
 
 /**
  * Light
@@ -41,7 +47,7 @@ const textureLoader = new THREE.TextureLoader()
 const paperBaseColor = textureLoader.load(paperBasePath)
 const paperNormalMap = textureLoader.load(paperNormalPath)
 
-// Paper
+// Paper 実寸 437, 618px
 const a4 = {
     width: 210,
     height: 297
@@ -77,18 +83,41 @@ window.addEventListener("resize", () => {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 })
 
-const mainElement = document.querySelector(".main")
-const div = document.createElement("div")
-div.style.position = "absolute"
-div.innerHTML = "Hello, World!"
-div.style.top =  a4.height + paper.position.y + "px"
-div.style.left = a4.width + paper.position.x + "px"
-mainElement?.appendChild(div)
+// typeWriter
+let typeWriter = new THREE.Group;
+const gltfLoader = new GLTFLoader();
+gltfLoader.load(typeWriterModlePath, function(gltf){
+    console.log(gltf)
+    typeWriter = gltf.scene
+    scene.add(typeWriter)
+})
+typeWriter.scale.set(2, 2, 2)
+
+// const mainElement = document.querySelector(".main")
+// const div = document.createElement("div")
+// div.style.position = "absolute"
+// div.innerHTML = "Hello, World!\na\na\na\na\na\na\na\na\na"
+// let divTop = a4.height + paper.position.y
+// let divLeft = a4.width + paper.position.x
+// div.style.top =  divTop + "px"
+// div.style.left = divLeft + "px"
+// mainElement?.appendChild(div)
+const overlay = document.querySelector("#overlay")
+const paperOverlay = document.createElement("div")
+paperOverlay.className = "paper"
+paperOverlay.style.position = "absolute"
+paperOverlay.style.top = paper.position.y + "px"
+overlay?.appendChild(paperOverlay)
 
 window.addEventListener('wheel', (event) => {
     event.preventDefault();
-    paper.position.y += event.deltaY * 0.005
+    paper.position.y -= event.deltaY * 0.005
     paper.position.clampScalar(-50, 10)
-    div.style.top = - paper.position.y + a4.height + "px"
-    console.log(paper.position.y)
+
+    const paperPosition = paper.getWorldPosition(new THREE.Vector3())
+    const projection = paperPosition.project(camera)
+    const sx = (sizes.height / 2) * (+projection.x + 1.0)
+    const sy = (sizes.width / 2) * (-projection.y + 1.0)
+    // divTop += event.deltaY * 0.005
+    // div.style.top = sy + -180 + "px"
 }, { passive: false })
