@@ -42,13 +42,18 @@ const paperBaseColor = textureLoader.load(paperBasePath)
 const paperNormalMap = textureLoader.load(paperNormalPath)
 
 // Paper
-const geometry = new THREE.PlaneGeometry(210, 297) // 形状
+const a4 = {
+    width: 210,
+    height: 297
+}
+const geometry = new THREE.PlaneGeometry(a4.width, a4.height) // 形状
 const material = new THREE.MeshStandardMaterial({
     map: paperBaseColor,
     normalMap: paperNormalMap,
     normalScale: new THREE.Vector2(0.2, 0.2),
 }) // 質感
 const paper = new THREE.Mesh(geometry, material)
+paper.position.set(0, -50 ,0)
 scene.add(paper)
 
 tick();
@@ -71,3 +76,19 @@ window.addEventListener("resize", () => {
     renderer.setSize(sizes.width, sizes.height)
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 })
+
+const mainElement = document.querySelector(".main")
+const div = document.createElement("div")
+div.style.position = "absolute"
+div.innerHTML = "Hello, World!"
+div.style.top =  a4.height + paper.position.y + "px"
+div.style.left = a4.width + paper.position.x + "px"
+mainElement?.appendChild(div)
+
+window.addEventListener('wheel', (event) => {
+    event.preventDefault();
+    paper.position.y += event.deltaY * 0.005
+    paper.position.clampScalar(-50, 10)
+    div.style.top = - paper.position.y + a4.height + "px"
+    console.log(paper.position.y)
+}, { passive: false })
