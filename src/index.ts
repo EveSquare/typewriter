@@ -29,11 +29,7 @@ const scene = new THREE.Scene()
 const fov: number = 45              // 画角
     , aspectRatio = sizes.width / sizes.height  // アスペクト比
 const camera = new THREE.PerspectiveCamera(fov, aspectRatio)
-camera.position.set(0, 0, 10)
-
-const axis = new THREE.AxesHelper(2000);
-axis.position.set(0, 0, 0);
-scene.add(axis);
+camera.position.set(1, 0, 10)
 
 /**
  * Light
@@ -49,17 +45,17 @@ const paperNormalMap = textureLoader.load(paperNormalPath)
 
 // Paper 実寸 437, 618px
 const a4 = {
-    width: 210,
-    height: 297
+    width: 21.0,
+    height: 29.7
 }
-const geometry = new THREE.PlaneGeometry(a4.width, a4.height) // 形状
+const geometry = new THREE.PlaneGeometry(4.2, 5) // 形状
 const material = new THREE.MeshStandardMaterial({
     map: paperBaseColor,
     normalMap: paperNormalMap,
     normalScale: new THREE.Vector2(0.2, 0.2),
 }) // 質感
 const paper = new THREE.Mesh(geometry, material)
-paper.position.set(0, -50 ,0)
+paper.position.set(1.15, -1.5, -0.7)
 scene.add(paper)
 
 tick();
@@ -89,9 +85,10 @@ const gltfLoader = new GLTFLoader();
 gltfLoader.load(typeWriterModlePath, function(gltf){
     console.log(gltf)
     typeWriter = gltf.scene
+    typeWriter.scale.set(2, 2, 2)
+    typeWriter.position.set(0, -3.5, -1)
     scene.add(typeWriter)
 })
-typeWriter.scale.set(2, 2, 2)
 
 // const mainElement = document.querySelector(".main")
 // const div = document.createElement("div")
@@ -114,10 +111,10 @@ window.addEventListener('wheel', (event) => {
     paper.position.y -= event.deltaY * 0.005
     paper.position.clampScalar(-50, 10)
 
-    const paperPosition = paper.getWorldPosition(new THREE.Vector3())
-    const projection = paperPosition.project(camera)
-    const sx = (sizes.height / 2) * (+projection.x + 1.0)
-    const sy = (sizes.width / 2) * (-projection.y + 1.0)
+    // const paperPosition = paper.getWorldPosition(new THREE.Vector3())
+    // const projection = paperPosition.project(camera)
+    // const sx = (sizes.height / 2) * (+projection.x + 1.0)
+    // const sy = (sizes.width / 2) * (-projection.y + 1.0)
     // divTop += event.deltaY * 0.005
     // div.style.top = sy + -180 + "px"
 }, { passive: false })
