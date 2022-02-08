@@ -4,7 +4,7 @@ module.exports = {
   plugins: [
     new CopyPlugin({
       patterns: [
-          {from: 'static', to: 'static'}
+          {from: 'assets', to: 'assets'}
       ]
     }),
   ],
@@ -30,6 +30,18 @@ module.exports = {
         // TypeScript をコンパイルする
         use: "ts-loader",
       },
+      {
+        test: /\.(scss|css)$/,
+        use: ["style-loader", "css-loader"],
+      },
+      {
+        test: /\.(jpg|png)$/,
+        use: "url-loader"
+      },
+      {
+        test: /\.(glb|gltf|ttf)$/,
+        use: "file-loader"
+      }
     ],
   },
   // import 文で .ts ファイルを解決するため
