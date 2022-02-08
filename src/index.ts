@@ -1,10 +1,12 @@
 import * as THREE from "three"
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader"
 
-const paperBasePath = "static/textures/Watercolor_Paper_001_COLOR.jpg"
-const paperNormalPath = "static/textures/Watercolor_Paper_001_NORM.jpg"
+import "./import"
+
+const paperBasePath = "assets/textures/Watercolor_Paper_001_COLOR.jpg"
+const paperNormalPath = "assets/textures/Watercolor_Paper_001_NORM.jpg"
 // const typeWriterModlePath = "https://rawcdn.githack.com/nishi-dy/glb--files/d0a6e1e252671749fc9d80dd5e8e375f132dab56/glass.glb"
-const typeWriterModlePath = "static/model/typewriter.glb"
+const typeWriterModlePath = "assets/model/typewriter.glb"
 
 const sizes = {
     width: window.innerWidth,
@@ -14,11 +16,10 @@ const sizes = {
 /**
  * Renderer
  */
-const renderer = new THREE.WebGLRenderer({
-    canvas: document.querySelector("#webGL") as HTMLCanvasElement
-})
+const renderer = new THREE.WebGLRenderer()
 renderer.setPixelRatio(window.devicePixelRatio)
 renderer.setSize(sizes.width, sizes.height)
+document.body.appendChild(renderer.domElement)
 
 // Scene
 const scene = new THREE.Scene()
