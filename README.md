@@ -25,10 +25,10 @@ Write the following code in `dist/index.html`
 
 ## start local server
 ```shell
-npm run start
+$ npm run start
 ```
 
 ## build code
 ```shell
-npm run build
+$ npm run build
 ```
