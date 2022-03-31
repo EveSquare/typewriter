@@ -1,6 +1,12 @@
+const path = require('path');
 const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = {
+  entry: ["./src/index.ts"],
+  output: {
+    path: path.join(__dirname, '/dist'),
+    filename: "main.js",
+  },
   plugins: [
     new CopyPlugin({
       patterns: [
@@ -12,16 +18,7 @@ module.exports = {
   // development に設定するとソースマップ有効でJSファイルが出力される
   // mode: "production",
   mode: "development",
-
-  // メインとなるJavaScriptファイル（エントリーポイント）
-  entry: "./src/index.ts",
-  // ファイルの出力設定
-  output: {
-    //  出力ファイルのディレクトリ名
-    path: `${__dirname}/dist`,
-    // 出力ファイル名
-    filename: "main.js",
-  },
+  devtool: 'source-map',
   module: {
     rules: [
       {
@@ -29,18 +26,10 @@ module.exports = {
         test: /\.ts$/,
         // TypeScript をコンパイルする
         use: "ts-loader",
-      },
-      {
-        test: /\.(scss|css)$/,
-        use: ["style-loader", "css-loader"],
-      },
-      {
-        test: /\.(jpg|png)$/,
-        use: "url-loader"
-      },
-      {
-        test: /\.(glb|gltf|ttf)$/,
-        use: "file-loader"
+      },{
+        test: /\.(jpe?g|png|gif|svg|tga|glb|babylon|mtl|pcb|pcd|prwm|obj|mat|mp3|ogg)$/i,
+        use: 'file-loader',
+        exclude: path.resolve(__dirname, './node_modules/')
       }
     ],
   },
@@ -48,7 +37,6 @@ module.exports = {
   resolve: {
     extensions: [".ts", ".js"],
   },
-
   devServer: {
     static: "dist",
     open: true
